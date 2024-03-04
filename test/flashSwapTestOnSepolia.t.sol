@@ -13,7 +13,7 @@ import "../src/flashSwap.sol";
 
 
 
-contract UniswapV2FlashloanTest is Test {
+contract FlashloanSepoliaTest is Test {
 
     address private constant CGAAddress = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
     address private constant CGBAddress = 0x6B175474E89094C44Da98b954EedeAC495271d0F;

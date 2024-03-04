@@ -1,8 +1,9 @@
 pragma solidity ^0.8.0;
 
-import '../../uniswapV2_core/interfaces/IUniswapV2Pair.sol';
-
+import "../../uniswapV2_core/interfaces/IUniswapV2Pair.sol";
 import "./SafeMath.sol";
+import {UniswapV2Pair} from "../../uniswapV2_core/UniswapV2Pair.sol";
+
 
 library UniswapV2Library {
     using SafeMath for uint;
@@ -21,10 +22,10 @@ library UniswapV2Library {
                 hex'ff',
                 factory,
                 keccak256(abi.encodePacked(token0, token1)),
-                hex'a2b4f32a54d4f22b2b5a4c5f4aa039bea51b6515aabbb6c980e308cd871b6be1' // init code hash
+                keccak256(abi.encodePacked(type(UniswapV2Pair).creationCode)) // init code hash
             )))));
     }
-    //'a2b4f32a54d4f22b2b5a4c5f4aa039bea51b6515aabbb6c980e308cd871b6be1' = keccak256(abi.encodePacked(type(UniswapV2Pair).creationCode));
+    //'0xa2b4f32a54d4f22b2b5a4c5f4aa039bea51b6515aabbb6c980e308cd871b6be1' = keccak256(abi.encodePacked(type(UniswapV2Pair).creationCode));
 
     // fetches and sorts the reserves for a pair
     function getReserves(address factory, address tokenA, address tokenB) internal view returns (uint reserveA, uint reserveB) {

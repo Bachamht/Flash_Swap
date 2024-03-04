@@ -11,23 +11,25 @@ import {UniswapV2Library} from "../src/uniswapV2_periphery/libraries/UniswapV2Li
 
 contract FlashSwap {
 
-    address private constant factory1 = 0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f;
-    address private constant factory2 = 0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f;
-    address private constant CGAAddress = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
-    address private constant CGBAddress = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
-    address private constant router1 = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
-    address private constant router2 = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
-    address private pair1;
-    address private pair2;
-    
-    constructor() {
-        pair1 = IUniswapV2Factory(factory1).getPair(CGAAddress, CGBAddress);
-        pair2 = IUniswapV2Factory(factory2).getPair(CGAAddress, CGBAddress);
-    }
+    address private factory1;
+    address private factory2;
+    address private CGAAddress;
+    address private CGBAddress;
+    address private router1;
+    address private router2;
 
+    constructor(address _factory1, address _factory2, address _CGAAddress, address _CGBAddress, address _router1, address _router2){
+        factory1 = _factory1;
+        factory2 = _factory2;
+        CGAAddress = _CGAAddress;
+        CGBAddress = _CGBAddress;
+        router1 = _router1;
+        router2 = _router1;
+    }
     
     function flashLoan(uint CGATokenAmount) external {
-        bytes memory data = abi.encode(CGAAddress, CGBAddress, CGATokenAmount);
+        address pair1 = IUniswapV2Factory(factory1).getPair(CGAAddress, CGBAddress);
+        bytes memory data = abi.encode(CGATokenAmount);
         UniswapV2Pair(pair1).swap(CGATokenAmount, 0, address(this), data);
     }
 
@@ -41,13 +43,13 @@ contract FlashSwap {
         address token0 = IUniswapV2Pair(msg.sender).token0(); 
         address token1 = IUniswapV2Pair(msg.sender).token1(); 
         assert(msg.sender == IUniswapV2Factory(factory1).getPair(token0, token1)); 
-
-        (address CGAPair2, address CGBPair2, uint256 lendAmounut) = abi.decode(data, (address, address, uint256));
-        address [] memory path;
-        path[0] = CGAPair2;
-        path[1] = CGBPair2;
+        (uint256 lendAmounut) = abi.decode(data, (uint256));
+        address [] memory path = new address [](2);
+        path[0] = CGAAddress;
+        path[1] = CGBAddress;
         uint256 CGAAmount = CGAToken(CGAAddress).balanceOf(address(this));
-        UniswapV2Router02(payable(router2)).swapExactTokensForTokens(CGAAmount, 9000, path, address(this), block.timestamp + 60);
+        CGAToken(CGAAddress).approve(address(router2), CGAAmount);
+        UniswapV2Router02(payable(router2)).swapExactTokensForTokens(CGAAmount, 2000, path, address(this), block.timestamp + 60);
         (uint reserveA, uint reserveB) = UniswapV2Library.getReserves(factory1, CGAAddress, CGBAddress);
         uint amountRepayment = UniswapV2Router02(payable(router2)).getAmountIn(lendAmounut, reserveA, reserveB);
         CGBToken(CGBAddress).transfer(router1, amountRepayment);
