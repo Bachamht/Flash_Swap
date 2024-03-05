@@ -56,7 +56,7 @@ contract FlashSwap {
         //Calculate the amount due and make repayments
         address pair1 = IUniswapV2Factory(factory1).getPair(CGAAddress, CGBAddress);
         (uint reserveA, uint reserveB) = UniswapV2Library.getReserves(factory1, CGAAddress, CGBAddress);
-        uint amountRepayment = UniswapV2Router02(payable(router1)).getAmountIn(100, 10000, 500);
+        uint amountRepayment = UniswapV2Router02(payable(router1)).getAmountIn(100, reserveB, reserveA);
         CGBToken(CGBAddress).transfer(pair1, amountRepayment);
     }
 }

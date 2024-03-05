@@ -7,11 +7,12 @@ import {CGBToken} from "../src/CGBToken.sol";
 contract UniswapV2Deploy is Script {
     function setUp() public {}
     function run() public {
-        address deployer = vm.rememberKey(vm.envUint("PRIVATE_KEY_LOCAL"));
+        address deployer = vm.rememberKey(vm.envUint("PRIVATE_KEY"));
         vm.startBroadcast(deployer);
         CGAToken cga = new CGAToken(); 
         CGBToken cgb = new CGBToken();
-        console.log(address(cga));
-        console.log(address(cgb));
+        console.log("CGA address:", address(cga));
+        console.log("CGB address:",address(cgb));
+        vm.stopBroadcast();
     }
 }

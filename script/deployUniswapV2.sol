@@ -17,23 +17,23 @@ contract UniswapV2Deploy is Script {
         WETH9 weth = new WETH9();
         UniswapV2Router02 router = new UniswapV2Router02(address(factory), address(weth));
 
-        console.log("factory address:", address(factory));
-        console.log("weth address:",  address(weth));
-        console.log("router address:", address(router));
+        console.log("factory1 address:", address(factory));
+        console.log("weth1 address:",  address(weth));
+        console.log("router1 address:", address(router));
 
     }
 
      function delpoyPoolTwo() public {
-        address deployer = vm.rememberKey(vm.envUint("PRIVATE_KEY_LOCAL"));
+        address deployer = vm.rememberKey(vm.envUint("PRIVATE_KEY"));
         vm.startBroadcast(deployer);
         UniswapV2Factory factory = new UniswapV2Factory(deployer); 
         console.logBytes32(factory.INIT_CODE_PAIR_HASH());
         WETH9 weth = new WETH9();
         UniswapV2Router02 router = new UniswapV2Router02(address(factory), address(weth));
-
-        console.log("factory address:", address(factory));
-        console.log("weth address:",  address(weth));
-        console.log("router address:", address(router));
+        vm.stopBroadcast();
+        console.log("factory2 address:", address(factory));
+        console.log("weth2 address:",  address(weth));
+        console.log("router2 address:", address(router));
 
     }
 
